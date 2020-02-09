@@ -10,7 +10,15 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+      '/api/': {
+      target: 'http://fbilab.cc:8080/api/', //设置调用的接口域名和端口
+      changeOrigin: true, //是否跨域
+      ws: true,
+      pathRewrite: {
+          '^/api/': ''
+      }
+    },},
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
