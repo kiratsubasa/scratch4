@@ -14,6 +14,11 @@ export default new Router({
       component: HomePage
     },
     {
+      path: '/:id',
+      name: 'HomePage',
+      component: HomePage
+    },
+    {
       path: '/section',
       component: NewsPage,
       children: [

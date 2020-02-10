@@ -3,11 +3,11 @@
     a#Lego(href='#')
         img(:src='iconSrc')
     h1.TitleB {{name}}
-    a.menuItem(v-for='item in menuList' :href="'#'+item.id") {{item.name}}
+    a.menuItem(v-for='item in menuList' :href="'#'+item.name") {{item.name}}
         #underline
     #drawer(v-if="drawerStatus")
         .drawerItem(v-for='(item,i) in menuList' @click='opentheDrawer()') 
-            a(:href="'#'+item.id") {{item.name}}
+            a(:href="'#'+item.name") {{item.name}}
                 #underline
     .menuIcon(@click='opentheDrawer()' :class="menuclassList")
         .menuIconBar1
@@ -73,6 +73,8 @@ export default {
 //common style
 $c-text: #333
 $c-bg: #eee
+*
+    scroll-behavior: smooth
 a
     color: $c-text
     text-decoration: none

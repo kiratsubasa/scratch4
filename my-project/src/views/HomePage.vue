@@ -2,8 +2,8 @@
 #app
     MenuM
     section.top(id="top")
-        Intro
-    section(v-for="(item,index) in menuList" :id="item.id")
+        SlideShow
+    section.section(v-for="(item,index) in menuList" :id="item.name" v-scroll="handleScroll")
         News(:name='item.name')
         
     //- section.Result
@@ -18,6 +18,7 @@
 
 <script>
 import MenuM from "@/components/MenuM.vue"
+import SlideShow from '@/components/SlideShow.vue'
 import Intro from "@/components/mainPage/Intro.vue"
 import News from "@/components/mainPage/News.vue"
 import Result from "@/components/mainPage/Result.vue"
@@ -32,6 +33,7 @@ export default {
     name: 'HomePage',
     components: {
         MenuM,
+        SlideShow,
         Intro,
         News,
         Result,
@@ -50,6 +52,19 @@ export default {
     created() {
         this.ApiListMenus(2);
     },
+    directives: {
+        scroll: {
+            // directive definition
+            inserted: function (el, binding) {
+                    let f = function (evt) {
+                    if (binding.value(evt, el)) {
+                        window.removeEventListener('scroll', f)
+                    }
+                }
+                window.addEventListener('scroll', f)
+            }
+        }
+    },
     methods: {
         ApiListMenus(id) {
             ListMenus(id)
@@ -59,8 +74,17 @@ export default {
                 .catch(err => {
                 console.log(err);
             });
+        },
+        handleScroll: function (evt, el) {
+            if (window.scrollY > el.offsetTop-window.innerHeight) {
+                el.setAttribute(
+                'style',
+                'opacity: 1;'
+                )
+            }
+            return window.scrollY > el.offsetTop-window.innerHeight
         }
-    },
+    }
 }
 
 </script>
@@ -73,7 +97,10 @@ export default {
 
 section
     padding: 10vh 0
-
+    transition: 1.5s all cubic-bezier(0.39, 0.575, 0.565, 1)
+.section
+    opacity: 0
+    transition: 2s
 //commom style
 h1 
     font-size: 28px

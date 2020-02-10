@@ -1,21 +1,16 @@
 <template lang="pug">
 div#Slider
-    .mySlides.mySlides1
-        #slideImg(:style="{'background-image': 'url(' + jumpBar[0].media.info.src + ')'}")
-    .mySlides.mySlides2(v-for='(jumpImage,index) in jumpBar' v-if="index!=0 &&index!= jumpBar.length-1")
+    .mySlides(v-for='(jumpImage,index) in jumpBar')
         #slideImg(:style="{'background-image': 'url(' + jumpImage.media.info.src + ')'}")
-    .mySlides.mySlides3
-        #slideImg(:style="{'background-image': 'url(' + jumpBar[jumpBar.length-1].media.info.src + ')'}")
-    .introContainer
-        h1.intro {{jumpBar[slideIndex-1].title}}
-        p {{jumpBar[slideIndex-1].subtitle}}
-    //- span.dot(v-for="(dot,index) in jumpBar")
+    .introContainer {{slideIndex}}
+        h1.intro {{jumpBar[slideIndex].title}}
+        p {{jumpBar[slideIndex].subtitle}}
+    span.dot(v-for="(dot,index) in jumpBar")
 
 </template>
 
 
 <script>
-var slideIndex = 1;
 var slide;
 import { ListSlider } from '@/api/Slider';
 export default {
@@ -23,7 +18,7 @@ export default {
     },
     data() {
         return {
-            slideIndex: 1,
+            slideIndex: 0,
             jumpBar: ''
         }
     },
@@ -37,52 +32,31 @@ export default {
                 console.log(err);
             });
         },
-        plusSlides(n) {
-            this.showSlides(slideIndex += n);
-        },
-
-        currentSlide(n){
-            this.showSlides(slideIndex = n);
-        },
-
         showSlides(n){
             var i;
             var slides = document.getElementsByClassName("mySlides");
-            var subWidth = 5/(slides.length);
-            if (n > slides.length) {slideIndex = 1}    
-            if (n < 1) {slideIndex = slides.length}
-            var numSubBlock = 0;
-            for (i = 0; i < slides.length; i++) {
-                //slides[i].style.display = "none"; 
-                if(i!=slideIndex-1){
-                    if(slideIndex==slides.length){
-                        if(i!=0){
-                            slides[i].style= "-webkit-clip-path : polygon(0 0, 100% 0%, 100% "+(95+subWidth*numSubBlock)+"%, 50% 100%, 0 "+(95+subWidth*numSubBlock)+"%)";  //else block 
-                            numSubBlock ++;
-                        }
-                    }
-                    else{
-                        if(i!=slideIndex){
-                            slides[i].style= "-webkit-clip-path : polygon(0 0, 100% 0%, 100% "+(95+subWidth*numSubBlock)+"%, 50% 100%, 0 "+(95+subWidth*numSubBlock)+"%)";  //else block 
-                            numSubBlock ++;
-                        }
-                    }
-                    
-                }
-            }
-            if(slideIndex==slides.length){
-                slides[0].style= "-webkit-clip-path : polygon(0 0, 100% 0%, 100% 95%, 50% 100%, 0 95%)";  //second block when slideIndex come to the end 
+            if(this.slideIndex == slides.length-1){
+                this.slideIndex=0;
             }
             else{
-                slides[slideIndex].style= "-webkit-clip-path : polygon(0 0, 100% 0%, 100% 95%, 50% 100%, 0 95%)";  //second block
+                this.slideIndex += n;
             }
-            slides[slideIndex-1].style = "-webkit-clip-path : polygon(0 0, 100% 0%, 100% 90%, 50% 100%, 0 90%)";  //first block
-            this.slideIndex = slideIndex;
+            for(i=0;i<slides.length;i++){
+                var idx = (i+this.slideIndex)%slides.length;
+                if(i == 0){
+                    slides[idx].style= "display: block"
+                    // slides[idx].style= "-webkit-clip-path : polygon-webkit-clip-path: polygon(50% 0, 100% 0, 100% 90%, 50% 100%, 0 90%, 0 0)"; 
+                }
+                else{
+                    slides[idx].style= "display: none";
+                    // slides[idx].style= "-webkit-clip-path : polygon-webkit-clip-path: polygon(50% 0, 100% 0, 100% 10%, 50% 20%, 0 10%, 0 0)"; 
+                }
+            }
         }
     },
     created() {
         this.ApiListSlider(2);
-        slide = setInterval(() => this.plusSlides(1), 5000);
+        slide = setInterval(() => this.showSlides(1), 5000);
     },
     beforeDestroy(){
         clearInterval(slide);
@@ -121,13 +95,14 @@ $c-secondary: #eee
         h1,p
             padding-left: 20px
     
-.mySlides1
-    -webkit-clip-path: polygon(0 0, 100% 0%, 100% 90%, 50% 100%, 0 90%)
+.mySlides
+    -webkit-clip-path: polygon(50% 0, 100% 0, 100% 90%, 50% 100%, 0 90%, 0 0)
+    transition: 0.4s
     position: absolute
     animation-name: fade
-    animation-duration: 2s
-    animation-timing: ease-in-out
-    animation-delay: 0.2s
+    animation-duration: 0.8s
+    animation-timing: ease-out
+    // animation-delay: 0.2s
     
 
 .mySlides2
@@ -146,12 +121,13 @@ $c-secondary: #eee
     animation-timing: ease-in-out
     animation-delay: 0.4s
 
-
 @keyframes fade
     from
         opacity: 0
+        -webkit-clip-path: polygon(50% 0, 100% 0, 100% 10%, 50% 20%, 0 10%, 0 0)
     to
         opacity: 1
+        -webkit-clip-path: polygon(50% 0, 100% 0, 100% 90%, 50% 100%, 0 90%, 0 0)
         
 @media only screen and (min-width: 480px)
     #slideImg
