@@ -2,7 +2,7 @@
 div#Slider
     .mySlides(v-for='(jumpImage,index) in jumpBar')
         #slideImg(:style="{'background-image': 'url(' + jumpImage.media.info.src + ')'}")
-    .introContainer {{slideIndex}}
+    .introContainer
         h1.intro {{jumpBar[slideIndex].title}}
         p {{jumpBar[slideIndex].subtitle}}
     span.dot(v-for="(dot,index) in jumpBar")
